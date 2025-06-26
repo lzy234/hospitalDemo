@@ -9,7 +9,7 @@ import { apiService } from './services/api'
 
 const AppContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   display: flex;
   flex-direction: column;
 `
@@ -17,22 +17,22 @@ const AppContainer = styled.div`
 const MainContent = styled.main<{ showVideoUpload: boolean }>`
   flex: 1;
   display: flex;
-  flex-direction: ${props => props.showVideoUpload ? 'column' : 'column'};
+  flex-direction: column;
   max-width: ${props => props.showVideoUpload ? '1200px' : 'none'};
   margin: 0 auto;
   width: 100%;
-  padding: ${props => props.showVideoUpload ? '20px' : '20px 40px'};
+  padding: ${props => props.showVideoUpload ? '20px' : '0'};
   gap: 20px;
   min-height: 0;
+  background: #ffffff;
 `
 
-const ChatSection = styled.div<{ isFullScreen: boolean }>`
+const VideoSection = styled.div`
   flex: 1;
-  min-width: 0;
   display: flex;
-  flex-direction: column;
-  width: ${props => props.isFullScreen ? '100%' : 'auto'};
-  max-width: ${props => props.isFullScreen ? 'none' : 'auto'};
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
 `
 
 const App: React.FC = () => {
@@ -40,6 +40,7 @@ const App: React.FC = () => {
   const [videoAnalysisResult, setVideoAnalysisResult] = useState<string>('')
   const [isVideoAnalyzed, setIsVideoAnalyzed] = useState(false)
   const [showVideoUpload, setShowVideoUpload] = useState(true)
+  const [showChatInterface, setShowChatInterface] = useState(false)
   const [showSuccessPrompt, setShowSuccessPrompt] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -83,9 +84,10 @@ const App: React.FC = () => {
   }
 
   const handleSuccessPromptComplete = () => {
-    // 隐藏成功提示并隐藏视频上传区域
+    // 隐藏视频上传区域，显示AI对话界面
     setShowSuccessPrompt(false)
     setShowVideoUpload(false)
+    setShowChatInterface(true)
   }
 
   if (loading) {
@@ -96,7 +98,7 @@ const App: React.FC = () => {
           justifyContent: 'center', 
           alignItems: 'center', 
           height: '100vh', 
-          color: 'white',
+          color: '#666',
           fontSize: '18px' 
         }}>
           加载中...
@@ -113,7 +115,7 @@ const App: React.FC = () => {
           justifyContent: 'center', 
           alignItems: 'center', 
           height: '100vh', 
-          color: 'white',
+          color: '#666',
           fontSize: '18px' 
         }}>
           配置加载失败
@@ -130,20 +132,23 @@ const App: React.FC = () => {
       />
       <MainContent showVideoUpload={showVideoUpload}>
         {showVideoUpload && (
-          <VideoUpload 
-            onVideoAnalyzed={handleVideoAnalyzed}
-            mockAnalysisResult={config.ui.mock_video_analysis_result}
-            isCompactMode={false}
-          />
+          <VideoSection>
+            <VideoUpload 
+              onVideoAnalyzed={handleVideoAnalyzed}
+              mockAnalysisResult={config.ui.mock_video_analysis_result}
+              isCompactMode={false}
+            />
+          </VideoSection>
         )}
-        <ChatSection isFullScreen={!showVideoUpload}>
+        
+        {showChatInterface && (
           <ChatInterface 
             suggestedQuestions={config.ui.suggested_questions}
             videoAnalysisResult={videoAnalysisResult}
             isVideoAnalyzed={isVideoAnalyzed}
-            isFullScreen={!showVideoUpload}
+            isFullScreen={true}
           />
-        </ChatSection>
+        )}
       </MainContent>
       
       <SuccessPrompt 

@@ -1,148 +1,160 @@
-import React, { useState, useRef, KeyboardEvent } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
-const InputContainer = styled.div`
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-  background: white;
+const InputContainer = styled.div<{ isFullScreen?: boolean }>`
   display: flex;
-  gap: 12px;
-  align-items: flex-end;
+  gap: 8px;
+  padding: 12px;
+  background: ${props => props.isFullScreen ? 'rgba(255, 255, 255, 0.95)' : 'white'};
+  border-radius: ${props => props.isFullScreen ? '8px' : '0 0 12px 12px'};
+  border-top: 1px solid #eee;
+  backdrop-filter: ${props => props.isFullScreen ? 'blur(10px)' : 'none'};
+  box-shadow: ${props => props.isFullScreen ? '0 -1px 4px rgba(0, 0, 0, 0.1)' : 'none'};
+  position: ${props => props.isFullScreen ? 'sticky' : 'relative'};
+  bottom: ${props => props.isFullScreen ? '16px' : 'auto'};
+  margin: ${props => props.isFullScreen ? '8px 0 0 0' : '0'};
+  z-index: 10;
+  
+  @media (max-width: 768px) {
+    bottom: ${props => props.isFullScreen ? '8px' : 'auto'};
+    margin: ${props => props.isFullScreen ? '8px 0 0 0' : '0'};
+  }
+`
+
+const InputWrapper = styled.div`
+  flex: 1;
+  position: relative;
 `
 
 const TextArea = styled.textarea`
-  flex: 1;
-  min-height: 40px;
-  max-height: 120px;
-  padding: 12px 16px;
-  border: 2px solid #e9ecef;
-  border-radius: 20px;
+  width: 100%;
+  min-height: 36px;
+  max-height: 80px;
+  padding: 8px 50px 8px 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 18px;
   resize: none;
-  outline: none;
-  font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.4;
-  transition: border-color 0.2s;
+  outline: none;
+  transition: all 0.2s ease;
+  background: white;
+  color: #333;
+  font-family: inherit;
 
   &:focus {
     border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
   }
 
   &::placeholder {
-    color: #999;
+    color: #aaa;
   }
 
   &:disabled {
     background: #f8f9fa;
+    border-color: #dee2e6;
     color: #6c757d;
     cursor: not-allowed;
   }
 `
 
-const SendButton = styled.button<{ disabled: boolean }>`
-  padding: 12px 16px;
-  background: ${props => props.disabled 
-    ? '#6c757d' 
-    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 60px;
-  justify-content: center;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
+const CharCount = styled.div`
+  position: absolute;
+  right: 12px;
+  bottom: 6px;
+  font-size: 10px;
+  color: #999;
+  pointer-events: none;
 `
 
-const CharCounter = styled.div<{ isNearLimit: boolean }>`
-  font-size: 12px;
-  color: ${props => props.isNearLimit ? '#dc3545' : '#6c757d'};
-  margin-left: 8px;
-  min-width: 50px;
-  text-align: right;
+const SendButton = styled.button<{ disabled: boolean }>`
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: ${props => props.disabled 
+    ? '#e9ecef' 
+    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
+  color: ${props => props.disabled ? '#adb5bd' : 'white'};
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: ${props => props.disabled ? 'none' : '0 1px 4px rgba(102, 126, 234, 0.3)'};
+
+  &:hover {
+    transform: ${props => props.disabled ? 'none' : 'scale(1.05)'};
+    box-shadow: ${props => props.disabled ? 'none' : '0 2px 8px rgba(102, 126, 234, 0.4)'};
+  }
+
+  &:active {
+    transform: ${props => props.disabled ? 'none' : 'scale(0.95)'};
+  }
 `
 
 interface InputAreaProps {
-  onSendMessage: (message: string) => void
+  onSendMessage: (content: string) => void
   disabled?: boolean
-  maxLength?: number
+  isFullScreen?: boolean
 }
 
 const InputArea: React.FC<InputAreaProps> = ({ 
   onSendMessage, 
   disabled = false,
-  maxLength = 1000
+  isFullScreen = false 
 }) => {
-  const [message, setMessage] = useState('')
+  const [input, setInput] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSend = () => {
-    if (message.trim() && !disabled) {
-      onSendMessage(message)
-      setMessage('')
-      // 重置文本框高度
-      if (textareaRef.current) {
-        textareaRef.current.style.height = '40px'
-      }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (input.trim() && !disabled) {
+      onSendMessage(input.trim())
+      setInput('')
     }
   }
 
-  const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      handleSubmit(e)
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value
-    if (value.length <= maxLength) {
-      setMessage(value)
-      
-      // 自动调整高度
-      if (textareaRef.current) {
-        textareaRef.current.style.height = '40px'
-        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
-      }
+  const adjustHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 80)}px`
     }
   }
 
-  const canSend = message.trim().length > 0 && !disabled
-  const isNearLimit = message.length > maxLength * 0.8
+  useEffect(() => {
+    adjustHeight()
+  }, [input])
 
   return (
-    <InputContainer>
-      <TextArea
-        ref={textareaRef}
-        value={message}
-        onChange={handleInputChange}
-        onKeyPress={handleKeyPress}
-        placeholder={disabled ? "AI正在回复中..." : "输入您的问题...（按Enter发送，Shift+Enter换行）"}
-        disabled={disabled}
-        maxLength={maxLength}
-      />
-      <CharCounter isNearLimit={isNearLimit}>
-        {message.length}/{maxLength}
-      </CharCounter>
+    <InputContainer isFullScreen={isFullScreen}>
+      <InputWrapper>
+        <TextArea
+          ref={textareaRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="输入您的问题..."
+          disabled={disabled}
+        />
+        <CharCount>{input.length}/1000</CharCount>
+      </InputWrapper>
       <SendButton
-        onClick={handleSend}
-        disabled={!canSend}
+        type="button"
+        onClick={handleSubmit}
+        disabled={disabled || !input.trim()}
       >
-        {disabled ? '⏳' : '📤'}
-        发送
+        ➤
       </SendButton>
     </InputContainer>
   )

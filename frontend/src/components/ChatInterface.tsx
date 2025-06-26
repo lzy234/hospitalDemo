@@ -7,35 +7,42 @@ import { ChatMessage } from '../types'
 import { apiService } from '../services/api'
 
 const ChatContainer = styled.div<{ isFullScreen: boolean }>`
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: ${props => props.isFullScreen ? 'calc(100vh - 160px)' : '500px'};
-  max-height: ${props => props.isFullScreen ? 'calc(100vh - 160px)' : 'calc(100vh - 200px)'};
+  min-height: ${props => props.isFullScreen ? 'calc(100vh - 80px)' : '500px'};
+  max-height: ${props => props.isFullScreen ? 'calc(100vh - 80px)' : 'calc(100vh - 200px)'};
+  width: 100%;
+  padding: ${props => props.isFullScreen ? '20px 40px' : '0'};
   overflow: hidden;
   
+  /* 白色背景适配 */
+  background: ${props => props.isFullScreen ? 'transparent' : 'white'};
+  border-radius: ${props => props.isFullScreen ? '0' : '12px'};
+  box-shadow: ${props => props.isFullScreen ? 'none' : '0 4px 12px rgba(0, 0, 0, 0.1)'};
+  
   @media (max-width: 768px) {
-    height: 600px;
+    padding: ${props => props.isFullScreen ? '20px' : '0'};
+    height: ${props => props.isFullScreen ? 'calc(100vh - 80px)' : '600px'};
     max-height: none;
-    flex: none;
   }
 `
 
-const ChatHeader = styled.div`
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  background: #f8f9fa;
-  border-radius: 12px 12px 0 0;
+const ChatHeader = styled.div<{ isFullScreen: boolean }>`
+  padding: ${props => props.isFullScreen ? '0 0 24px 0' : '16px 20px'};
+  border-bottom: ${props => props.isFullScreen ? '1px solid #e9ecef' : '1px solid #eee'};
+  background: ${props => props.isFullScreen ? 'transparent' : '#f8f9fa'};
+  border-radius: ${props => props.isFullScreen ? '0' : '12px 12px 0 0'};
   flex-shrink: 0;
+  margin-bottom: ${props => props.isFullScreen ? '20px' : '0'};
 `
 
-const ChatTitle = styled.h3`
+const ChatTitle = styled.h3<{ isFullScreen: boolean }>`
   margin: 0;
-  color: #333;
-  font-size: 18px;
+  color: ${props => props.isFullScreen ? '#333' : '#333'};
+  font-size: ${props => props.isFullScreen ? '24px' : '18px'};
+  font-weight: 600;
+  text-align: ${props => props.isFullScreen ? 'center' : 'left'};
 `
 
 const ChatBody = styled.div`
@@ -46,7 +53,7 @@ const ChatBody = styled.div`
   overflow: hidden;
 `
 
-const WelcomeMessage = styled.div`
+const WelcomeMessage = styled.div<{ isFullScreen?: boolean }>`
   padding: 40px 20px;
   text-align: center;
   color: #666;
@@ -155,7 +162,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const renderContent = () => {
     if (!isVideoAnalyzed) {
       return (
-        <WelcomeMessage>
+        <WelcomeMessage isFullScreen={isFullScreen}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏥</div>
           <div>请先上传手术视频进行解析</div>
           <div style={{ fontSize: '14px', marginTop: '8px', opacity: 0.7 }}>
@@ -170,16 +177,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <MessageList 
           messages={messages} 
           isLoading={isLoading}
+          isFullScreen={isFullScreen}
+          suggestedQuestions={suggestedQuestions}
+          onQuestionClick={handleQuestionClick}
+          disabled={isLoading}
           ref={chatContainerRef}
         />
         <InputArea 
           onSendMessage={handleSendMessage}
           disabled={isLoading}
-        />
-        <SuggestedQuestions 
-          questions={suggestedQuestions}
-          onQuestionClick={handleQuestionClick}
-          disabled={isLoading}
+          isFullScreen={isFullScreen}
         />
       </>
     )
@@ -187,9 +194,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <ChatContainer isFullScreen={isFullScreen}>
-      <ChatHeader>
-        <ChatTitle>AI 智能问答</ChatTitle>
-      </ChatHeader>
       <ChatBody>
         {renderContent()}
       </ChatBody>

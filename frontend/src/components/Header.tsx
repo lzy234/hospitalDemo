@@ -2,25 +2,26 @@ import React from 'react'
 import styled from 'styled-components'
 
 const HeaderContainer = styled.header`
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 20px 0;
+  padding: 12px 0;
   text-align: center;
   color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `
 
 const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 `
 
 const Subtitle = styled.p`
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   opacity: 0.9;
   font-weight: 300;
+  margin: 0;
 `
 
 interface HeaderProps {

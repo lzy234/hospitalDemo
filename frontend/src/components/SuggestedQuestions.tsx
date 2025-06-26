@@ -1,53 +1,57 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const SuggestionsContainer = styled.div`
-  padding: 16px 20px;
+const QuestionsContainer = styled.div<{ isFullScreen?: boolean }>`
+  padding: ${props => props.isFullScreen ? '8px 0' : '8px 20px'};
   border-top: 1px solid #eee;
-  background: #f8f9fa;
-  border-radius: 0 0 12px 12px;
+  background: ${props => props.isFullScreen ? 'transparent' : '#f8f9fa'};
+  border-radius: ${props => props.isFullScreen ? '0' : '0'};
 `
 
-const SuggestionsTitle = styled.div`
-  font-size: 14px;
+const QuestionsTitle = styled.h4<{ isFullScreen?: boolean }>`
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  font-weight: 600;
   color: #666;
-  margin-bottom: 12px;
-  font-weight: 500;
+  text-align: ${props => props.isFullScreen ? 'center' : 'left'};
 `
 
-const SuggestionsGrid = styled.div`
+const QuestionsGrid = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
+  
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 6px;
+  }
 `
 
-const SuggestionButton = styled.button<{ disabled: boolean }>`
-  padding: 8px 16px;
+const QuestionButton = styled.button<{ disabled: boolean; isFullScreen?: boolean }>`
+  padding: 8px 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
   background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 16px;
-  font-size: 13px;
-  color: #495057;
+  color: #333;
+  font-size: 12px;
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  text-align: left;
+  line-height: 1.3;
+  font-family: inherit;
   opacity: ${props => props.disabled ? 0.6 : 1};
   
   &:hover:not(:disabled) {
-    background: #667eea;
-    color: white;
     border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
   }
 
   &:active:not(:disabled) {
     transform: translateY(0);
-  }
-
-  /* 响应式设计 */
-  @media (max-width: 768px) {
-    flex: 1;
-    min-width: calc(50% - 4px);
   }
 `
 
@@ -55,35 +59,35 @@ interface SuggestedQuestionsProps {
   questions: string[]
   onQuestionClick: (question: string) => void
   disabled?: boolean
+  isFullScreen?: boolean
 }
 
 const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ 
   questions, 
   onQuestionClick, 
-  disabled = false 
+  disabled = false,
+  isFullScreen = false 
 }) => {
   if (!questions || questions.length === 0) {
     return null
   }
 
   return (
-    <SuggestionsContainer>
-      <SuggestionsTitle>
-        💡 建议提问：
-      </SuggestionsTitle>
-      <SuggestionsGrid>
+    <QuestionsContainer isFullScreen={isFullScreen}>
+      <QuestionsTitle isFullScreen={isFullScreen}>建议问题</QuestionsTitle>
+      <QuestionsGrid>
         {questions.map((question, index) => (
-          <SuggestionButton
+          <QuestionButton
             key={index}
-            onClick={() => !disabled && onQuestionClick(question)}
+            onClick={() => onQuestionClick(question)}
             disabled={disabled}
-            title={question}
+            isFullScreen={isFullScreen}
           >
             {question}
-          </SuggestionButton>
+          </QuestionButton>
         ))}
-      </SuggestionsGrid>
-    </SuggestionsContainer>
+      </QuestionsGrid>
+    </QuestionsContainer>
   )
 }
 
