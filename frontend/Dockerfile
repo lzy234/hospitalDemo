@@ -1,6 +1,6 @@
 # --- 1. 构建阶段 ---
 # 使用 Node.js 镜像来构建 React 应用
-FROM node:18-alpine AS build
+FROM docker.m.daocloud.io/node:18-alpine AS build
 
 # 设置工作目录
 WORKDIR /app

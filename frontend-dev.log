@@ -1,0 +1,21 @@
+正在安装前端依赖...
+(node:98499) ExperimentalWarning: CommonJS module /opt/homebrew/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /opt/homebrew/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+up to date in 430ms
+
+81 packages are looking for funding
+  run `npm fund` for details
+前端依赖安装完成，启动开发服务器...
+
+> hospital-demo-frontend@1.0.0 dev
+> vite
+
+
+  VITE v4.5.14  ready in 170 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: use --host to expose
+(node:98565) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
