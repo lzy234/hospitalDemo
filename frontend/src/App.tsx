@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Header from './components/Header'
 import VideoUpload from './components/VideoUpload'
 import ChatInterface from './components/ChatInterface'
+import SuccessPrompt from './components/SuccessPrompt'
 import { AppConfig } from './types'
 import { apiService } from './services/api'
 
@@ -13,21 +14,33 @@ const AppContainer = styled.div`
   flex-direction: column;
 `
 
-const MainContent = styled.main`
+const MainContent = styled.main<{ showVideoUpload: boolean }>`
   flex: 1;
   display: flex;
-  flex-direction: column;
-  max-width: 1200px;
+  flex-direction: ${props => props.showVideoUpload ? 'column' : 'column'};
+  max-width: ${props => props.showVideoUpload ? '1200px' : 'none'};
   margin: 0 auto;
   width: 100%;
-  padding: 20px;
+  padding: ${props => props.showVideoUpload ? '20px' : '20px 40px'};
   gap: 20px;
+  min-height: 0;
+`
+
+const ChatSection = styled.div<{ isFullScreen: boolean }>`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  width: ${props => props.isFullScreen ? '100%' : 'auto'};
+  max-width: ${props => props.isFullScreen ? 'none' : 'auto'};
 `
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<AppConfig | null>(null)
   const [videoAnalysisResult, setVideoAnalysisResult] = useState<string>('')
   const [isVideoAnalyzed, setIsVideoAnalyzed] = useState(false)
+  const [showVideoUpload, setShowVideoUpload] = useState(true)
+  const [showSuccessPrompt, setShowSuccessPrompt] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -64,6 +77,15 @@ const App: React.FC = () => {
   const handleVideoAnalyzed = (result: string) => {
     setVideoAnalysisResult(result)
     setIsVideoAnalyzed(true)
+    
+    // 显示成功提示
+    setShowSuccessPrompt(true)
+  }
+
+  const handleSuccessPromptComplete = () => {
+    // 隐藏成功提示并隐藏视频上传区域
+    setShowSuccessPrompt(false)
+    setShowVideoUpload(false)
   }
 
   if (loading) {
@@ -106,17 +128,29 @@ const App: React.FC = () => {
         title={config.ui.title}
         subtitle={config.ui.subtitle}
       />
-      <MainContent>
-        <VideoUpload 
-          onVideoAnalyzed={handleVideoAnalyzed}
-          mockAnalysisResult={config.ui.mock_video_analysis_result}
-        />
-        <ChatInterface 
-          suggestedQuestions={config.ui.suggested_questions}
-          videoAnalysisResult={videoAnalysisResult}
-          isVideoAnalyzed={isVideoAnalyzed}
-        />
+      <MainContent showVideoUpload={showVideoUpload}>
+        {showVideoUpload && (
+          <VideoUpload 
+            onVideoAnalyzed={handleVideoAnalyzed}
+            mockAnalysisResult={config.ui.mock_video_analysis_result}
+            isCompactMode={false}
+          />
+        )}
+        <ChatSection isFullScreen={!showVideoUpload}>
+          <ChatInterface 
+            suggestedQuestions={config.ui.suggested_questions}
+            videoAnalysisResult={videoAnalysisResult}
+            isVideoAnalyzed={isVideoAnalyzed}
+            isFullScreen={!showVideoUpload}
+          />
+        </ChatSection>
       </MainContent>
+      
+      <SuccessPrompt 
+        isVisible={showSuccessPrompt}
+        onComplete={handleSuccessPromptComplete}
+        countdown={3}
+      />
     </AppContainer>
   )
 }

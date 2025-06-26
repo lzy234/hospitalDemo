@@ -2,18 +2,23 @@ import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import { apiService } from '../services/api'
 
-const UploadContainer = styled.div`
+const UploadContainer = styled.div<{ isCompact: boolean }>`
   background: white;
   border-radius: 12px;
-  padding: 24px;
+  padding: ${props => props.isCompact ? '16px' : '24px'};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: ${props => props.isCompact ? '0' : '20px'};
+  height: ${props => props.isCompact ? 'fit-content' : 'auto'};
+  
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 `
 
-const UploadArea = styled.div<{ isDragOver: boolean; isUploaded: boolean }>`
+const UploadArea = styled.div<{ isDragOver: boolean; isUploaded: boolean; isCompact: boolean }>`
   border: 2px dashed ${props => props.isUploaded ? '#28a745' : props.isDragOver ? '#667eea' : '#ddd'};
   border-radius: 8px;
-  padding: 40px 20px;
+  padding: ${props => props.isCompact ? '20px 16px' : '40px 20px'};
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
@@ -25,20 +30,20 @@ const UploadArea = styled.div<{ isDragOver: boolean; isUploaded: boolean }>`
   }
 `
 
-const UploadIcon = styled.div`
-  font-size: 48px;
-  margin-bottom: 16px;
+const UploadIcon = styled.div<{ isCompact?: boolean }>`
+  font-size: ${props => props.isCompact ? '24px' : '48px'};
+  margin-bottom: ${props => props.isCompact ? '8px' : '16px'};
   color: #666;
 `
 
-const UploadText = styled.p`
-  font-size: 16px;
+const UploadText = styled.p<{ isCompact?: boolean }>`
+  font-size: ${props => props.isCompact ? '14px' : '16px'};
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: ${props => props.isCompact ? '4px' : '8px'};
 `
 
-const UploadHint = styled.p`
-  font-size: 14px;
+const UploadHint = styled.p<{ isCompact?: boolean }>`
+  font-size: ${props => props.isCompact ? '12px' : '14px'};
   color: #999;
 `
 
@@ -58,10 +63,11 @@ const ProgressFill = styled.div<{ progress: number }>`
   transition: width 0.3s;
 `
 
-const StatusText = styled.div<{ type: 'success' | 'info' | 'warning' }>`
-  padding: 12px;
+const StatusText = styled.div<{ type: 'success' | 'info' | 'warning'; isCompact?: boolean }>`
+  padding: ${props => props.isCompact ? '8px' : '12px'};
   border-radius: 6px;
-  margin-top: 16px;
+  margin-top: ${props => props.isCompact ? '8px' : '16px'};
+  font-size: ${props => props.isCompact ? '12px' : '14px'};
   background: ${props => {
     switch (props.type) {
       case 'success': return '#d4edda'
@@ -88,26 +94,49 @@ const StatusText = styled.div<{ type: 'success' | 'info' | 'warning' }>`
   }};
 `
 
-const AnalysisResult = styled.div`
-  margin-top: 20px;
-  padding: 20px;
+const AnalysisResult = styled.div<{ isCompact: boolean }>`
+  margin-top: ${props => props.isCompact ? '12px' : '20px'};
+  padding: ${props => props.isCompact ? '12px' : '20px'};
   background: #f8f9fa;
   border-radius: 8px;
   border-left: 4px solid #667eea;
+  max-height: ${props => props.isCompact ? '100px' : 'none'};
+  overflow: hidden;
 `
 
-const AnalysisTitle = styled.h3`
-  margin-bottom: 12px;
+const AnalysisTitle = styled.h3<{ isCompact?: boolean }>`
+  margin-bottom: ${props => props.isCompact ? '8px' : '12px'};
   color: #333;
-  font-size: 18px;
+  font-size: ${props => props.isCompact ? '14px' : '18px'};
+`
+
+const ExpandButton = styled.button`
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #5a6fd8;
+  }
 `
 
 interface VideoUploadProps {
   onVideoAnalyzed: (result: string) => void
   mockAnalysisResult: string
+  isCompactMode?: boolean
 }
 
-const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysisResult }) => {
+const VideoUpload: React.FC<VideoUploadProps> = ({ 
+  onVideoAnalyzed, 
+  mockAnalysisResult, 
+  isCompactMode = false 
+}) => {
   const [uploadState, setUploadState] = useState({
     isUploading: false,
     isUploaded: false,
@@ -117,6 +146,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
     progress: 0
   })
   const [isDragOver, setIsDragOver] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (file: File) => {
@@ -201,15 +231,32 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
     if (uploadState.isAnalyzed) {
       return (
         <>
-          <UploadIcon>✅</UploadIcon>
-          <UploadText>视频解析完成</UploadText>
-          <StatusText type="success">
-            视频"{uploadState.filename}"已成功解析，可以开始与AI对话了
+          <UploadIcon isCompact={isCompactMode}>✅</UploadIcon>
+          <UploadText isCompact={isCompactMode}>
+            {isCompactMode ? '解析完成' : '视频解析完成'}
+          </UploadText>
+          <StatusText type="success" isCompact={isCompactMode}>
+            {isCompactMode 
+              ? `"${uploadState.filename.length > 15 ? uploadState.filename.substring(0, 15) + '...' : uploadState.filename}"已解析` 
+              : `视频"${uploadState.filename}"已成功解析，可以开始与AI对话了`
+            }
           </StatusText>
-          <AnalysisResult>
-            <AnalysisTitle>解析结果预览：</AnalysisTitle>
-            <div>{mockAnalysisResult.substring(0, 200)}...</div>
-          </AnalysisResult>
+          {(!isCompactMode || isExpanded) && (
+            <AnalysisResult isCompact={isCompactMode}>
+              <AnalysisTitle isCompact={isCompactMode}>解析结果预览：</AnalysisTitle>
+              <div>{mockAnalysisResult.substring(0, isCompactMode ? 100 : 200)}...</div>
+            </AnalysisResult>
+          )}
+          {isCompactMode && !isExpanded && (
+            <ExpandButton onClick={() => setIsExpanded(true)}>
+              查看详情
+            </ExpandButton>
+          )}
+          {isCompactMode && isExpanded && (
+            <ExpandButton onClick={() => setIsExpanded(false)}>
+              收起
+            </ExpandButton>
+          )}
         </>
       )
     }
@@ -217,10 +264,12 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
     if (uploadState.isAnalyzing) {
       return (
         <>
-          <UploadIcon>🔄</UploadIcon>
-          <UploadText>正在解析视频...</UploadText>
-          <StatusText type="info">
-            AI正在分析手术视频内容，请稍候...
+          <UploadIcon isCompact={isCompactMode}>🔄</UploadIcon>
+          <UploadText isCompact={isCompactMode}>
+            {isCompactMode ? '解析中...' : '正在解析视频...'}
+          </UploadText>
+          <StatusText type="info" isCompact={isCompactMode}>
+            {isCompactMode ? 'AI分析中...' : 'AI正在分析手术视频内容，请稍候...'}
           </StatusText>
         </>
       )
@@ -229,10 +278,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
     if (uploadState.isUploaded) {
       return (
         <>
-          <UploadIcon>✅</UploadIcon>
-          <UploadText>上传成功</UploadText>
-          <StatusText type="success">
-            视频"{uploadState.filename}"上传成功，即将开始解析...
+          <UploadIcon isCompact={isCompactMode}>✅</UploadIcon>
+          <UploadText isCompact={isCompactMode}>上传成功</UploadText>
+          <StatusText type="success" isCompact={isCompactMode}>
+            {isCompactMode 
+              ? '即将解析...' 
+              : `视频"${uploadState.filename}"上传成功，即将开始解析...`
+            }
           </StatusText>
         </>
       )
@@ -241,8 +293,10 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
     if (uploadState.isUploading) {
       return (
         <>
-          <UploadIcon>📤</UploadIcon>
-          <UploadText>正在上传 {uploadState.filename}...</UploadText>
+          <UploadIcon isCompact={isCompactMode}>📤</UploadIcon>
+          <UploadText isCompact={isCompactMode}>
+            {isCompactMode ? '上传中...' : `正在上传 ${uploadState.filename}...`}
+          </UploadText>
           <ProgressBar>
             <ProgressFill progress={uploadState.progress} />
           </ProgressBar>
@@ -253,18 +307,23 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoAnalyzed, mockAnalysis
 
     return (
       <>
-        <UploadIcon>📹</UploadIcon>
-        <UploadText>点击或拖拽上传手术视频</UploadText>
-        <UploadHint>支持 MP4, AVI, MOV 格式，最大 100MB</UploadHint>
+        <UploadIcon isCompact={isCompactMode}>📹</UploadIcon>
+        <UploadText isCompact={isCompactMode}>
+          {isCompactMode ? '上传视频' : '点击或拖拽上传手术视频'}
+        </UploadText>
+        {!isCompactMode && (
+          <UploadHint isCompact={isCompactMode}>支持 MP4, AVI, MOV 格式，最大 100MB</UploadHint>
+        )}
       </>
     )
   }
 
   return (
-    <UploadContainer>
+    <UploadContainer isCompact={isCompactMode}>
       <UploadArea
         isDragOver={isDragOver}
         isUploaded={uploadState.isUploaded}
+        isCompact={isCompactMode}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
