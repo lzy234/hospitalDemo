@@ -57,8 +57,7 @@ const App: React.FC = () => {
       // 使用默认配置
       setConfig({
         ui: {
-          title: '医学手术复盘AI助手',
-          subtitle: '基于AI的手术视频分析与智能问答系统',
+          title: '孙惠川教授手术评估智能体Demo',
           suggested_questions: [
             '请分析这次手术的关键操作步骤有哪些？',
             '手术过程中有哪些需要改进的地方？',
