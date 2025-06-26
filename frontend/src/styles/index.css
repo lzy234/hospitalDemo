@@ -62,7 +62,7 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #c00;
   color: white;
 }
 
@@ -73,12 +73,12 @@ body {
 
 .btn-outline {
   background: transparent;
-  border: 2px solid #667eea;
-  color: #667eea;
+  border: 2px solid #c00;
+  color: #c00;
 }
 
 .btn-outline:hover {
-  background: #667eea;
+  background: #c00;
   color: white;
 }
 

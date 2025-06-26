@@ -39,7 +39,7 @@ const MessageBubble = styled.div<{ isUser: boolean; isFullScreen?: boolean }>`
   background: ${props => {
     if (props.isUser) {
       // 用户消息保持渐变色
-      return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      return '#c00'
     } else {
       // AI消息改为浅灰色背景
       return '#f8f9fa'
@@ -50,6 +50,8 @@ const MessageBubble = styled.div<{ isUser: boolean; isFullScreen?: boolean }>`
   position: relative;
   word-wrap: break-word;
   border: ${props => props.isUser ? 'none' : '1px solid #e9ecef'};
+  margin-left: ${props => props.isUser ? '0' : '10px'};
+  margin-right: ${props => props.isUser ? '10px' : '0'};
 
   &::before {
     content: '';
@@ -62,7 +64,7 @@ const MessageBubble = styled.div<{ isUser: boolean; isFullScreen?: boolean }>`
     border-width: 8px 8px 0 8px;
     border-color: ${props => {
       if (props.isUser) {
-        return '#667eea transparent transparent transparent'
+        return '#c00 transparent transparent transparent'
       } else {
         return '#f8f9fa transparent transparent transparent'
       }
@@ -209,11 +211,11 @@ const QuestionButton = styled.button<{ disabled: boolean }>`
   opacity: ${props => props.disabled ? 0.6 : 1};
   
   &:hover:not(:disabled) {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #c00;
+    background: #c00;
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(200, 0, 0, 0.3);
   }
 
   &:active:not(:disabled) {
@@ -278,20 +280,18 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(({
   return (
     <MessageContainer ref={ref} isFullScreen={isFullScreen}>
       {messages.map((message) => (
-        <div key={message.id}>
-          <MessageBubble isUser={message.type === 'user'} isFullScreen={isFullScreen}>
-            <MessageContent isFullScreen={isFullScreen}>
-              {message.type === 'user' ? (
-                message.content
-              ) : (
-                <ReactMarkdown>{message.content}</ReactMarkdown>
-              )}
-            </MessageContent>
-            <MessageTime isUser={message.type === 'user'} isFullScreen={isFullScreen}>
-              {formatTime(message.timestamp)}
-            </MessageTime>
-          </MessageBubble>
-        </div>
+        <MessageBubble key={message.id} isUser={message.type === 'user'} isFullScreen={isFullScreen}>
+          <MessageContent isFullScreen={isFullScreen}>
+            {message.type === 'user' ? (
+              message.content
+            ) : (
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            )}
+          </MessageContent>
+          <MessageTime isUser={message.type === 'user'} isFullScreen={isFullScreen}>
+            {formatTime(message.timestamp)}
+          </MessageTime>
+        </MessageBubble>
       ))}
       {isLoading && (
         <LoadingIndicator isFullScreen={isFullScreen}>

@@ -16,17 +16,17 @@ const UploadContainer = styled.div<{ isCompact: boolean }>`
 `
 
 const UploadArea = styled.div<{ isDragOver: boolean; isUploaded: boolean; isCompact: boolean }>`
-  border: 2px dashed ${props => props.isUploaded ? '#28a745' : props.isDragOver ? '#667eea' : '#ddd'};
+  border: 2px dashed ${props => props.isUploaded ? '#c00' : props.isDragOver ? '#c00' : '#ddd'};
   border-radius: 8px;
   padding: ${props => props.isCompact ? '20px 16px' : '40px 20px'};
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: ${props => props.isDragOver ? 'rgba(102, 126, 234, 0.05)' : 'transparent'};
+  background: ${props => props.isDragOver ? 'rgba(200, 0, 0, 0.05)' : 'transparent'};
 
   &:hover {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.05);
+    border-color: #c00;
+    background: rgba(200, 0, 0, 0.05);
   }
 `
 
@@ -58,7 +58,7 @@ const ProgressBar = styled.div`
 
 const ProgressFill = styled.div<{ progress: number }>`
   height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: #c00;
   width: ${props => props.progress}%;
   transition: width 0.3s;
 `
@@ -99,7 +99,7 @@ const AnalysisResult = styled.div<{ isCompact: boolean }>`
   padding: ${props => props.isCompact ? '12px' : '20px'};
   background: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #c00;
   max-height: ${props => props.isCompact ? '100px' : 'none'};
   overflow: hidden;
 `
@@ -111,7 +111,7 @@ const AnalysisTitle = styled.h3<{ isCompact?: boolean }>`
 `
 
 const ExpandButton = styled.button`
-  background: #667eea;
+  background: #c00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -122,7 +122,7 @@ const ExpandButton = styled.button`
   transition: background 0.2s;
 
   &:hover {
-    background: #5a6fd8;
+    background: #a00;
   }
 `
 

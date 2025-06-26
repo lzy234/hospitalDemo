@@ -22,7 +22,7 @@ const MainContent = styled.main<{ showVideoUpload: boolean }>`
   margin: 0 auto;
   width: 100%;
   padding: ${props => props.showVideoUpload ? '20px' : '0'};
-  gap: 20px;
+  gap: 0px;
   min-height: 0;
   background: #ffffff;
 `

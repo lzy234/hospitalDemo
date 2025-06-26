@@ -43,11 +43,11 @@ const QuestionButton = styled.button<{ disabled: boolean; isFullScreen?: boolean
   opacity: ${props => props.disabled ? 0.6 : 1};
   
   &:hover:not(:disabled) {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #c00;
+    background: #c00;
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 6px rgba(200, 0, 0, 0.3);
   }
 
   &:active:not(:disabled) {

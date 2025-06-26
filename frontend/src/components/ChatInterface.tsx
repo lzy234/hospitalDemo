@@ -11,7 +11,7 @@ const ChatContainer = styled.div<{ isFullScreen: boolean }>`
   flex-direction: column;
   flex: 1;
   min-height: ${props => props.isFullScreen ? 'calc(100vh - 80px)' : '500px'};
-  max-height: ${props => props.isFullScreen ? 'calc(100vh - 80px)' : 'calc(100vh - 200px)'};
+  max-height: ${props => props.isFullScreen ? 'calc(100vh - 50px)' : 'calc(100vh - 200px)'};
   width: 100%;
   padding: ${props => props.isFullScreen ? '20px 40px' : '0'};
   overflow: hidden;

@@ -3,21 +3,21 @@ import styled from 'styled-components'
 
 const InputContainer = styled.div<{ isFullScreen?: boolean }>`
   display: flex;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 10px;
   background: ${props => props.isFullScreen ? 'rgba(255, 255, 255, 0.95)' : 'white'};
-  border-radius: ${props => props.isFullScreen ? '8px' : '0 0 12px 12px'};
-  border-top: 1px solid #eee;
+  border-radius: ${props => props.isFullScreen ? '80px' : '0 0 12px 12px'};
+  border-top: 0px solid #eee;
   backdrop-filter: ${props => props.isFullScreen ? 'blur(10px)' : 'none'};
   box-shadow: ${props => props.isFullScreen ? '0 -1px 4px rgba(0, 0, 0, 0.1)' : 'none'};
   position: ${props => props.isFullScreen ? 'sticky' : 'relative'};
-  bottom: ${props => props.isFullScreen ? '16px' : 'auto'};
-  margin: ${props => props.isFullScreen ? '8px 0 0 0' : '0'};
+  bottom: ${props => props.isFullScreen ? '0px' : 'auto'};
+  margin: ${props => props.isFullScreen ? '4px 0 0 0' : '0'};
   z-index: 10;
   
   @media (max-width: 768px) {
-    bottom: ${props => props.isFullScreen ? '8px' : 'auto'};
-    margin: ${props => props.isFullScreen ? '8px 0 0 0' : '0'};
+    bottom: ${props => props.isFullScreen ? '2px' : 'auto'};
+    margin: ${props => props.isFullScreen ? '2px 0 0 0' : '0'};
   }
 `
 
@@ -28,13 +28,13 @@ const InputWrapper = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  min-height: 36px;
+  min-height: 16px;
   max-height: 80px;
   padding: 8px 50px 8px 12px;
   border: 1px solid #e9ecef;
   border-radius: 18px;
   resize: none;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
   outline: none;
   transition: all 0.2s ease;
@@ -43,8 +43,8 @@ const TextArea = styled.textarea`
   font-family: inherit;
 
   &:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    border-color: #c00;
+    box-shadow: 0 0 0 2px rgba(200, 0, 0, 0.1);
   }
 
   &::placeholder {
@@ -75,7 +75,7 @@ const SendButton = styled.button<{ disabled: boolean }>`
   border-radius: 50%;
   background: ${props => props.disabled 
     ? '#e9ecef' 
-    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
+    : '#c00'};
   color: ${props => props.disabled ? '#adb5bd' : 'white'};
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   display: flex;
@@ -84,11 +84,11 @@ const SendButton = styled.button<{ disabled: boolean }>`
   font-size: 14px;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  box-shadow: ${props => props.disabled ? 'none' : '0 1px 4px rgba(102, 126, 234, 0.3)'};
+  box-shadow: ${props => props.disabled ? 'none' : '0 1px 4px rgba(200, 0, 0, 0.3)'};
 
   &:hover {
     transform: ${props => props.disabled ? 'none' : 'scale(1.05)'};
-    box-shadow: ${props => props.disabled ? 'none' : '0 2px 8px rgba(102, 126, 234, 0.4)'};
+    box-shadow: ${props => props.disabled ? 'none' : '0 2px 8px rgba(200, 0, 0, 0.4)'};
   }
 
   &:active {

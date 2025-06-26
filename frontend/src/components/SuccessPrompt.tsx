@@ -56,7 +56,7 @@ const SuccessIcon = styled.div`
 `
 
 const Title = styled.h2`
-  color: #28a745;
+  color: #c00;
   font-size: 24px;
   margin-bottom: 16px;
   font-weight: 600;
@@ -76,13 +76,13 @@ const CountdownContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #667eea;
+  color: #c00;
   font-size: 14px;
   animation: ${fadeIn} 0.6s ease-out 1s both;
 `
 
 const CountdownNumber = styled.span`
-  background: #667eea;
+  background: #c00;
   color: white;
   width: 24px;
   height: 24px;
@@ -96,8 +96,8 @@ const CountdownNumber = styled.span`
 
 const SkipButton = styled.button`
   background: transparent;
-  border: 1px solid #667eea;
-  color: #667eea;
+  border: 1px solid #c00;
+  color: #c00;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 12px;
@@ -107,7 +107,7 @@ const SkipButton = styled.button`
   animation: ${fadeIn} 0.6s ease-out 1.2s both;
 
   &:hover {
-    background: #667eea;
+    background: #c00;
     color: white;
   }
 `
